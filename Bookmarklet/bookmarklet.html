@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {text-align: center;}
+        #enterBook {float: left; width: 50%;  background-color: darkslategray; color: floralwhite;}
+        #findDetails {float: left; width: 50%; background-color: floralwhite; color: darkslategray;}
+        input {width: 120px;}
+    </style>
+</head>
+<body>
+    <div id="enterBook">
+        <h1>Enter book</h1>
+
+        <h4>ID</h4> 
+        <input id="enterID" type="text"> 
+
+        <h4>Name</h4> 
+        <input id="enterName" type="text"> 
+
+        <h4>Genre</h4> 
+        <input id="enterGenre" type="text"> <br><br>
+
+        <button id="insert">INSERT</button>
+        <button id="update">UPDATE</button>
+        <button id="remove">REMOVE</button> <br><br>
+    </div>
+
+    <div id="findDetails">
+        <h1>Find by book</h1>
+        <h4>Book</h4>
+        <input id="findID" type="text"> <br><br>
+        <button id="find">FIND</button>
+        <h3 id="findName" type="text"></h3>
+        <h3 id="findGenre" type="text"></h3> <br><br>
+    </div>
+    
+
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhjXkUWxy994Y1V5lZGM5Fy8Fx96qzDfM",
+    authDomain: "bookmarklet-c04c4.firebaseapp.com",
+    databaseURL: "https://bookmarklet-c04c4-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "bookmarklet-c04c4",
+    storageBucket: "bookmarklet-c04c4.appspot.com",
+    messagingSenderId: "205057818500",
+    appId: "1:205057818500:web:af600b12435e5e728467d1"
+  };
+
+  import {getDatabase, ref, get, set, child, update, remove}
+from"https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+      const app = initializeApp(firebaseConfig); 
+        
+        const db = getDatabase();
+
+        var enterID = document.querySelector("#enterID");
+        var enterName = document.querySelector("#enterName");
+        var enterGenre = document.querySelector("#enterGenre");
+        var findID = document.querySelector("#findID");
+        var findName = document.querySelector("#findName");
+        var findGenre = document.querySelector("#findGenre");
+      
+
+        var insertBtn = document.querySelector("#insert");
+        var updateBtn = document.querySelector("#update");
+        var removeBtn = document.querySelector("#remove");
+        var findBtn = document.querySelector("#find");
+
+        function InsertData() {
+            set(ref(db, "People/"+ enterID.value),{
+                Name: enterName.value,
+                ID: enterID.value,
+                Genre: enterGenre.value
+            })
+            .then(()=>{
+                alert("Data added successfully");
+            })
+            .catch((error)=>{
+                alert(error);
+            });
+        }
+
+        function FindData() {
+            const dbref = ref(db);
+
+            get(child(dbref, "People/" + findID.value))
+            .then((snapshot)=>{
+                if(snapshot.exists()){
+                    findName.innerHTML = "Name: " + snapshot.val().Name;
+                    findGenre.innerHTML = "Genre: " + snapshot.val().Genre;
+                } else {
+                    alert("No data found");
+                }
+            })
+            .catch((error)=>{
+                alert(error)
+            })
+            
+        }
+
+        function UpdateData(){
+            update(ref(db, "People/"+ enterID.value),{
+                Name: enterName.value,
+                Genre: enterGenre.value
+            })
+            .then(()=>{
+                alert("Data updated successfully");
+            })
+            .catch((error)=>{
+                alert(error);
+            });
+        }
+
+        function RemoveData(){
+            remove(ref(db, "People/"+ enterID.value))
+            .then(()=>{
+                alert("Data deleted successfully");
+            })
+            .catch((error)=>{
+                alert(error);
+            });
+        }
+
+        insertBtn.addEventListener('click', InsertData);
+        updateBtn.addEventListener('click', UpdateData);
+        removeBtn.addEventListener('click', RemoveData);
+        findBtn.addEventListener('click', FindData);
+
+      </script>
+</body>
+</html>
